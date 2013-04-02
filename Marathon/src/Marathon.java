@@ -19,13 +19,11 @@ public class Marathon extends JFrame{
 			ObjectInputStream in = new ObjectInputStream(fil);
 			allPersons = (ArrayList<Person>) in.readObject();
 		} catch (FileNotFoundException e){
-			// No file found. Continue with empty list
+			// asd
 		} catch (IOException e){
-			add(new JOptionPane("IOException: " + e));
-			System.exit(3);
+			System.out.println("IOException: " + e);
 		} catch (ClassNotFoundException e){
 			add(new JOptionPane("ClassNotFoundException: " + e));
-			System.exit(4);
 		}
 		
 		// NORTH -- 
@@ -34,6 +32,9 @@ public class Marathon extends JFrame{
 		// CENTER
 		listArea = new JTextArea();
 		listArea.setEditable(false);
+		for(Person p : allPersons){
+			listArea.append(p.toString());
+		}
 		JScrollPane listScroll = new JScrollPane(listArea);
 		add(listScroll, BorderLayout.CENTER);
 		
@@ -45,7 +46,7 @@ public class Marathon extends JFrame{
 		JButton showButton = new JButton("Visa");
 		showButton.addActionListener(new Show());
 		JButton timeButton = new JButton("Tid");
-	//	timeButton.addActionListener(new Time());
+		timeButton.addActionListener(new AddTime());
 		southPanel.add(newPersonButton);
 		southPanel.add(showButton);
 		southPanel.add(timeButton);
@@ -73,6 +74,64 @@ public class Marathon extends JFrame{
 		setSize(new Dimension(350,350));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
+	}
+	
+	class AddTime implements ActionListener{
+		public void actionPerformed(ActionEvent ave){
+			TimeForm timeForm = new TimeForm();
+			boolean updated = false;
+			for(;;){
+				try {
+					int i = JOptionPane.showConfirmDialog(null, timeForm, "Ny tid",JOptionPane.OK_CANCEL_OPTION);
+						if (i == 0){
+							for (Person p : allPersons){
+								if (p.getStartNr() == timeForm.getStartNr()){
+									p.setTime(timeForm.getTime());
+									try {
+										FileOutputStream fil = new FileOutputStream("AllPersons.pj");
+										ObjectOutputStream out = new ObjectOutputStream(fil);
+										out.writeObject(allPersons);
+									} catch (IOException e){
+										JOptionPane.showMessageDialog(null, "IOException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
+									}
+									updated = true;
+									break;
+								}
+							}						
+						}
+					if (updated)	
+						break;
+					else
+						JOptionPane.showMessageDialog(null, "Det startnummret finns inte!", "Fel", JOptionPane.ERROR_MESSAGE);
+				} catch (NumberFormatException e){
+					JOptionPane.showMessageDialog(null, "Fel input!", "Fel", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+	}
+	
+	class TimeForm extends JPanel{
+		private JTextField startNrField = new JTextField(10);
+		private JTextField timeField = new JTextField(10);
+		public TimeForm(){
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			JPanel row1 = new JPanel();
+			startNrField = new JTextField(10);
+			row1.add(new JLabel("Startnr:"));
+			row1.add(startNrField);
+			add(row1);
+			JPanel row2 = new JPanel();
+			timeField = new JTextField(10);
+			row2.add(new JLabel("Tid:"));
+			row2.add(timeField);
+			add(row2);
+		}
+		public int getStartNr(){
+			return Integer.parseInt(startNrField.getText());
+		}
+		public double getTime(){
+			return Double.parseDouble(timeField.getText());
+		}
 	}
 	
 	class Show implements ActionListener{
@@ -129,6 +188,13 @@ public class Marathon extends JFrame{
 													newPersonForm.getCountry(),
 													newPersonForm.getAge());
 							allPersons.add(p);
+							try {
+								FileOutputStream fil = new FileOutputStream("AllPersons.pj");
+								ObjectOutputStream out = new ObjectOutputStream(fil);
+								out.writeObject(allPersons);
+							} catch (IOException e){
+								System.exit(1);
+							}
 						}
 					break;
 				} catch (NumberFormatException e){

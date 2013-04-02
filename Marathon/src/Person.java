@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Person {
+public class Person implements Serializable{
 	private int startNr;
 	private String namn;
 	private String country;
@@ -14,7 +15,7 @@ public class Person {
 	}
 	
 	// Get methods for all attributes
-	public int getStartnr(){
+	public int getStartNr(){
 		return startNr;
 	}
 	public String getNamn(){
@@ -26,22 +27,20 @@ public class Person {
 	public int getAge(){
 		return age;
 	}
-	public double getTime(){
-		return time;
+	public String getTime(){
+		if (time == -1)
+			return "--";
+		else
+			return ""+time;
 	}
+		
 	
 	// Set methods for the attributes that can be modified
-	public void setCountry(String country){
-		this.country = country;
-	}
-	public void setAge(int age){
-		this.age = age;
-	}
 	public void setTime(double time){
 		this.time = time;
 	}
 	
 	public String toString(){
-		return startNr + "  " + namn + "  " + age + "  " + time;
+		return startNr + "  " + namn + "  " + age + "  " + getTime() + "\n";
 	}
 }
