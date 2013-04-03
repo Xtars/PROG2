@@ -5,7 +5,7 @@ public class Person implements Serializable{
 	private String namn;
 	private String country;
 	private int age;
-	private double time = -1;
+	private double time = Double.MAX_VALUE;
 	
 	Person(int startnr, String namn, String country, int age){
 		this.startNr = startnr;
@@ -27,8 +27,12 @@ public class Person implements Serializable{
 	public int getAge(){
 		return age;
 	}
-	public String getTime(){
-		if (time == -1)
+	public double getTime(){
+		return time;
+	}
+	
+	public String printTime(){
+		if (time == Double.MAX_VALUE)
 			return "--";
 		else
 			return ""+time;
@@ -41,6 +45,6 @@ public class Person implements Serializable{
 	}
 	
 	public String toString(){
-		return startNr + "  " + namn + "  " + age + "  " + getTime() + "\n";
+		return startNr + "  " + namn + "  " + age + "  " + printTime() + "\n";
 	}
 }

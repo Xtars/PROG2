@@ -21,9 +21,9 @@ public class Marathon extends JFrame{
 		} catch (FileNotFoundException e){
 			// asd
 		} catch (IOException e){
-			System.out.println("IOException: " + e);
+			JOptionPane.showMessageDialog(null, "IOException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
 		} catch (ClassNotFoundException e){
-			add(new JOptionPane("ClassNotFoundException: " + e));
+			JOptionPane.showMessageDialog(null, "ClassNotFoundException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
 		}
 		
 		// NORTH -- 
