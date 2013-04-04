@@ -11,9 +11,25 @@ public class Marathon extends JFrame{
 	private static ArrayList<Person> allPersons = new ArrayList<Person>();
 	JRadioButton[] radioArray = new JRadioButton[4];
 	private static Marathon m;
+	Show updateTextArea = new Show();
 	
 	Marathon(){
 		super("DSV Kista Marathon");
+		addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(WindowEvent winEvt) {
+				try {
+					FileOutputStream fil = new FileOutputStream("AllPersons.pj");
+					ObjectOutputStream out = new ObjectOutputStream(fil);
+					out.writeObject(allPersons);
+					System.out.println("Saved allPersons successfully!");
+					System.exit(0);
+				} catch (IOException e){
+					JOptionPane.showMessageDialog(m, "IOException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
+					System.out.println("allPersons was not saved.");
+					System.exit(1);
+				}
+		    }
+		});
 		
 		// Read in existing persons from file
 		try {
@@ -24,10 +40,10 @@ public class Marathon extends JFrame{
 			// File not found, continue with empty list
 		} catch (IOException e){
 			JOptionPane.showMessageDialog(this, "IOException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
+			System.exit(2);
 		} catch (ClassNotFoundException e){
 			JOptionPane.showMessageDialog(this, "ClassNotFoundException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
-			System.exit(2);
+			System.exit(3);
 		}
 		
 		// NORTH -- 
@@ -48,7 +64,7 @@ public class Marathon extends JFrame{
 		JButton newPersonButton = new JButton("Ny");
 		newPersonButton.addActionListener(new NewPerson());
 		JButton showButton = new JButton("Visa");
-		showButton.addActionListener(new Show());
+		showButton.addActionListener(updateTextArea);
 		JButton timeButton = new JButton("Tid");
 		timeButton.addActionListener(new AddTime());
 		southPanel.add(newPersonButton);
@@ -67,6 +83,7 @@ public class Marathon extends JFrame{
 		SortLiss radioListener = new SortLiss();
 		ButtonGroup radioGroup = new ButtonGroup();
 		for (JRadioButton b : radioArray){
+			b.addActionListener(updateTextArea);
 			b.addActionListener(radioListener);
 			radioGroup.add(b);
 		}
@@ -80,7 +97,7 @@ public class Marathon extends JFrame{
 		setLocation(new Point(400,300));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
-	}
+	} // Constructor
 	
 	// Listener for radio-buttons
 	class SortLiss implements ActionListener{
@@ -101,8 +118,8 @@ public class Marathon extends JFrame{
 				TimeCmp cmp = new TimeCmp();
 				Collections.sort(allPersons, cmp);
 			}
-		}
-	}
+		} // actionPerformed
+	} // SortLiss
 	
 	// Listener for "Tid"-button
 	class AddTime implements ActionListener{
@@ -116,33 +133,26 @@ public class Marathon extends JFrame{
 						for (Person p : allPersons){
 							if (p.getStartNr() == timeForm.getStartNr()){
 								p.setTime(timeForm.getTime());
-								try {
-									FileOutputStream fil = new FileOutputStream("AllPersons.pj");
-									ObjectOutputStream out = new ObjectOutputStream(fil);
-									out.writeObject(allPersons);
-								} catch (IOException e){
-									JOptionPane.showMessageDialog(m, "IOException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
-									System.exit(3);
-								}
 								updated = true;
+								updateTextArea.actionPerformed(null); // Update textArea automatically when a time has been updated
 								break;
-							}
-						}
+							} // if
+						} // for
 						if (updated) // If updated, break the infinite loop
 							break;
-						else  // Else, run another iteration of the infinite loop
+						else  // Else, show error then run another iteration of the infinite loop
 							JOptionPane.showMessageDialog(m, "Det startnummret finns inte!", "Fel", JOptionPane.ERROR_MESSAGE);
-					}
+					} // if i == 0
 					else if (i == 2) // Cancel was pushed, break the infinite loop
 						break;
 					else if (i == -1) // Window closed using X, break the infinite loop
 						break;
 				} catch (NumberFormatException e){
 					JOptionPane.showMessageDialog(m, "Fel input!", "Fel", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		}
-	}
+				} // catch
+			} // infnite for
+		} // actionPerformed
+	} // AddTime
 	
 	// Listener for "Visa"-button
 	class Show implements ActionListener{
@@ -171,23 +181,17 @@ public class Marathon extends JFrame{
 												newPersonForm.getAge());
 						// Add to the list and save the list to file
 						allPersons.add(p);
-						try {
-							FileOutputStream fil = new FileOutputStream("AllPersons.pj");
-							ObjectOutputStream out = new ObjectOutputStream(fil);
-							out.writeObject(allPersons);
-						} catch (IOException e){
-							System.exit(4);
-						}
-					}
+						updateTextArea.actionPerformed(null); // Update textArea automatically when a new person has been added
+					} // if i == 0
 					// This break will break the loop if a person was added or if Cancel/X was pressed
 					break;
 				} catch (NumberFormatException e){
 					// Wrong type on the Age field, loop will run again
 					JOptionPane.showMessageDialog(m, "Ålder måste vara ett heltal!", "Fel", JOptionPane.ERROR_MESSAGE);
 				}
-			}
-		}
-	}
+			} // infnite for
+		} // actionPerformed
+	} // NewPerson
 	
 	// Compare two persons by startNr
 	class StartnrCmp implements Comparator<Person>{
@@ -213,13 +217,12 @@ public class Marathon extends JFrame{
 	// Compare two persons by time
 	class TimeCmp implements Comparator<Person>{
 		public int compare(Person p1, Person p2){
-			if (p1.getTime() - p2.getTime() > 0)
+			if (p1.getTime() > p2.getTime())
 				return 1;
-			if (p1.getTime() - p2.getTime() < 0)
+			if (p1.getTime() < p2.getTime())
 				return -1;
 			else
 				return 0;
-			
 		}
 	}
 	
@@ -246,7 +249,7 @@ public class Marathon extends JFrame{
 		public double getTime(){
 			return Double.parseDouble(timeField.getText());
 		}
-	}
+	} // TimeForm
 	
 	// Form for the "Ny"-popup
 	class NewPersonForm extends JPanel{
@@ -280,7 +283,7 @@ public class Marathon extends JFrame{
 		public int getAge(){
 			return Integer.parseInt(ageField.getText());
 		}
-	}
+	} // NewPersonForm
 	
 	public static void main(String[] args){
 		m = new Marathon();
