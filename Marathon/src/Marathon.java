@@ -129,7 +129,7 @@ public class Marathon extends JFrame{
 			for(;;){
 				try {
 					int i = JOptionPane.showConfirmDialog(m, timeForm, "Ny tid",JOptionPane.OK_CANCEL_OPTION);
-					if (i == 0){ // OK was pushed, look for the entered startNr in allPersons
+					if (i == 0 && (timeForm.getStartNr() >= 1 && timeForm.getStartNr() <= allPersons.size())){ // OK was pushed, look for the entered startNr in allPersons
 						for (Person p : allPersons){
 							if (p.getStartNr() == timeForm.getStartNr()){
 								p.setTime(timeForm.getTime());
@@ -138,14 +138,14 @@ public class Marathon extends JFrame{
 								break;
 							} // if
 						} // for
-						if (updated) // If updated, break the infinite loop
-							break;
-						else  // Else, show error then run another iteration of the infinite loop
-							JOptionPane.showMessageDialog(m, "Det startnummret hittades inte!", "Fel", JOptionPane.ERROR_MESSAGE);
 					} // if i == 0
-					else if (i == 2) // Cancel was pushed, break the infinite loop
+					else if (i == 0 && (timeForm.getStartNr() < 1 || timeForm.getStartNr() > allPersons.size()))
+						JOptionPane.showMessageDialog(m, "Det startnummret hittades inte!", "Fel", JOptionPane.ERROR_MESSAGE);
+					else if (i == 2) // Cancel was pressed, break the infinite loop
 						break;
-					else if (i == -1) // Window closed using X, break the infinite loop
+					else if (i == -1) // X was pressed, break the infinite loop
+						break;
+					if (updated)
 						break;
 				} catch (NumberFormatException e){
 					JOptionPane.showMessageDialog(m, "Fel input!", "Fel", JOptionPane.ERROR_MESSAGE);
@@ -173,7 +173,7 @@ public class Marathon extends JFrame{
 					int i = JOptionPane.showConfirmDialog(m, newPersonForm, "Ny person",JOptionPane.OK_CANCEL_OPTION);
 
 					// OK was pressed with no NFE	
-					if (i == 0){
+					if (i == 0 && !newPersonForm.getName().isEmpty() && !newPersonForm.getCountry().isEmpty()){
 						// Create the person based on the answers in the form
 						Person p = new Person(	allPersons.size()+1,
 												newPersonForm.getName(),
@@ -182,14 +182,19 @@ public class Marathon extends JFrame{
 						// Add to the list and save the list to file
 						allPersons.add(p);
 						updateTextArea.actionPerformed(null); // Update textArea automatically when a new person has been added
-					} // if i == 0
-					// This break will break the loop if a person was added or if Cancel/X was pressed
-					break;
+						break;
+					}
+					else if (i == 0)
+						JOptionPane.showMessageDialog(m, "Alla fält måste vara ifyllda!", "Fel", JOptionPane.ERROR_MESSAGE);
+					else if (i == 2) // Cancel was pressed, break the infinite loop
+						break;
+					else if (i == -1) // X was pressed, break the infinite loop
+						break;
 				} catch (NumberFormatException e){
 					// Wrong type on the Age field, loop will run again
 					JOptionPane.showMessageDialog(m, "Ålder måste vara ett heltal!", "Fel", JOptionPane.ERROR_MESSAGE);
 				}
-			} // infnite for
+			} // infinite for
 		} // actionPerformed
 	} // NewPerson
 	

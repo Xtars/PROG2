@@ -33,7 +33,7 @@ public class Person implements Serializable{
 	
 	public String printTime(){
 		if (time == Double.MAX_VALUE)
-			return "--";
+			return "INGEN TID";
 		else
 			return ""+time;
 	}		
@@ -44,6 +44,6 @@ public class Person implements Serializable{
 	}
 	
 	public String toString(){
-		return startNr + "  " + namn + "\t" + age + " \t" + printTime() + "\n";
+		return startNr + " - " + namn + " - " + country + " - " + age + " - " + printTime() + "\n";
 	}
 }
