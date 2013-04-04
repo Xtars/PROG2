@@ -36,8 +36,7 @@ public class Person implements Serializable{
 			return "--";
 		else
 			return ""+time;
-	}
-		
+	}		
 	
 	// Set methods for the attributes that can be modified
 	public void setTime(double time){
@@ -45,6 +44,6 @@ public class Person implements Serializable{
 	}
 	
 	public String toString(){
-		return startNr + "  " + namn + "  " + age + "  " + printTime() + "\n";
+		return startNr + "  " + namn + "\t" + age + " \t" + printTime() + "\n";
 	}
 }

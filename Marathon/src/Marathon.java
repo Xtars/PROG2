@@ -2,11 +2,15 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Collections;
 import java.io.*;
 
 public class Marathon extends JFrame{
 	JTextArea listArea;
 	private static ArrayList<Person> allPersons = new ArrayList<Person>();
+	JRadioButton[] radioArray = new JRadioButton[4];
+	private static Marathon m;
 	
 	Marathon(){
 		super("DSV Kista Marathon");
@@ -17,11 +21,13 @@ public class Marathon extends JFrame{
 			ObjectInputStream in = new ObjectInputStream(fil);
 			allPersons = (ArrayList<Person>) in.readObject();
 		} catch (FileNotFoundException e){
-			// asd
+			// File not found, continue with empty list
 		} catch (IOException e){
-			JOptionPane.showMessageDialog(null, "IOException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "IOException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		} catch (ClassNotFoundException e){
-			JOptionPane.showMessageDialog(null, "ClassNotFoundException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "ClassNotFoundException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
+			System.exit(2);
 		}
 		
 		// NORTH -- 
@@ -54,13 +60,14 @@ public class Marathon extends JFrame{
 		JPanel eastPanel = new JPanel();
 		eastPanel.setLayout(new GridLayout(5,1));
 		JLabel sortByLabel = new JLabel("Sortering");
-		JRadioButton[] radioArray = new JRadioButton[4];
 		radioArray[0] = new JRadioButton("Startnr", true);
 		radioArray[1] = new JRadioButton("Namn", false);
 		radioArray[2] = new JRadioButton("Ålder", false);
 		radioArray[3] = new JRadioButton("Tid", false);
+		SortLiss radioListener = new SortLiss();
 		ButtonGroup radioGroup = new ButtonGroup();
 		for (JRadioButton b : radioArray){
+			b.addActionListener(radioListener);
 			radioGroup.add(b);
 		}
 		eastPanel.add(sortByLabel);
@@ -70,44 +77,153 @@ public class Marathon extends JFrame{
 		add(eastPanel, BorderLayout.EAST);
 		
 		setSize(new Dimension(350,350));
+		setLocation(new Point(400,300));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 	}
 	
+	// Listener for radio-buttons
+	class SortLiss implements ActionListener{
+		public void actionPerformed(ActionEvent ave){
+			if (radioArray[0].isSelected()){
+				StartnrCmp cmp = new StartnrCmp();
+				Collections.sort(allPersons, cmp);
+			}
+			if (radioArray[1].isSelected()){
+				NameCmp cmp = new NameCmp();
+				Collections.sort(allPersons, cmp);
+			}
+			if (radioArray[2].isSelected()){
+				AgeCmp cmp = new AgeCmp();
+				Collections.sort(allPersons, cmp);
+			}
+			if (radioArray[3].isSelected()){
+				TimeCmp cmp = new TimeCmp();
+				Collections.sort(allPersons, cmp);
+			}
+		}
+	}
+	
+	// Listener for "Tid"-button
 	class AddTime implements ActionListener{
 		public void actionPerformed(ActionEvent ave){
 			TimeForm timeForm = new TimeForm();
 			boolean updated = false;
 			for(;;){
 				try {
-					int i = JOptionPane.showConfirmDialog(null, timeForm, "Ny tid",JOptionPane.OK_CANCEL_OPTION);
-						if (i == 0){
-							for (Person p : allPersons){
-								if (p.getStartNr() == timeForm.getStartNr()){
-									p.setTime(timeForm.getTime());
-									try {
-										FileOutputStream fil = new FileOutputStream("AllPersons.pj");
-										ObjectOutputStream out = new ObjectOutputStream(fil);
-										out.writeObject(allPersons);
-									} catch (IOException e){
-										JOptionPane.showMessageDialog(null, "IOException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
-									}
-									updated = true;
-									break;
+					int i = JOptionPane.showConfirmDialog(m, timeForm, "Ny tid",JOptionPane.OK_CANCEL_OPTION);
+					if (i == 0){ // OK was pushed, look for the entered startNr in allPersons
+						for (Person p : allPersons){
+							if (p.getStartNr() == timeForm.getStartNr()){
+								p.setTime(timeForm.getTime());
+								try {
+									FileOutputStream fil = new FileOutputStream("AllPersons.pj");
+									ObjectOutputStream out = new ObjectOutputStream(fil);
+									out.writeObject(allPersons);
+								} catch (IOException e){
+									JOptionPane.showMessageDialog(m, "IOException: " + e, "Fel", JOptionPane.ERROR_MESSAGE);
+									System.exit(3);
 								}
-							}						
+								updated = true;
+								break;
+							}
 						}
-					if (updated)	
+						if (updated) // If updated, break the infinite loop
+							break;
+						else  // Else, run another iteration of the infinite loop
+							JOptionPane.showMessageDialog(m, "Det startnummret finns inte!", "Fel", JOptionPane.ERROR_MESSAGE);
+					}
+					else if (i == 2) // Cancel was pushed, break the infinite loop
 						break;
-					else
-						JOptionPane.showMessageDialog(null, "Det startnummret finns inte!", "Fel", JOptionPane.ERROR_MESSAGE);
+					else if (i == -1) // Window closed using X, break the infinite loop
+						break;
 				} catch (NumberFormatException e){
-					JOptionPane.showMessageDialog(null, "Fel input!", "Fel", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(m, "Fel input!", "Fel", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 	}
 	
+	// Listener for "Visa"-button
+	class Show implements ActionListener{
+		public void actionPerformed(ActionEvent ave){
+			listArea.setText("");
+			for(Person p : allPersons){
+				listArea.append(p.toString());
+			}
+		}
+	}
+	
+	// Listener for "Ny"-button	
+	class NewPerson implements ActionListener{
+		public void actionPerformed(ActionEvent ave){
+			NewPersonForm newPersonForm = new NewPersonForm();
+			for(;;){
+				try {
+					int i = JOptionPane.showConfirmDialog(m, newPersonForm, "Ny person",JOptionPane.OK_CANCEL_OPTION);
+
+					// OK was pressed with no NFE	
+					if (i == 0){
+						// Create the person based on the answers in the form
+						Person p = new Person(	allPersons.size()+1,
+												newPersonForm.getName(),
+												newPersonForm.getCountry(),
+												newPersonForm.getAge());
+						// Add to the list and save the list to file
+						allPersons.add(p);
+						try {
+							FileOutputStream fil = new FileOutputStream("AllPersons.pj");
+							ObjectOutputStream out = new ObjectOutputStream(fil);
+							out.writeObject(allPersons);
+						} catch (IOException e){
+							System.exit(4);
+						}
+					}
+					// This break will break the loop if a person was added or if Cancel/X was pressed
+					break;
+				} catch (NumberFormatException e){
+					// Wrong type on the Age field, loop will run again
+					JOptionPane.showMessageDialog(m, "Ålder måste vara ett heltal!", "Fel", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+	}
+	
+	// Compare two persons by startNr
+	class StartnrCmp implements Comparator<Person>{
+		public int compare(Person p1, Person p2){
+			return p1.getStartNr() - p2.getStartNr();
+		}
+	}
+	
+	// Compare two persons by name
+	class NameCmp implements Comparator<Person>{
+		public int compare(Person p1, Person p2){
+			return p1.getNamn().compareTo(p2.getNamn());
+		}
+	}
+	
+	// Compare two persons by age
+	class AgeCmp implements Comparator<Person>{
+		public int compare(Person p1, Person p2){
+			return p1.getAge() - p2.getAge();
+		}
+	}
+	
+	// Compare two persons by time
+	class TimeCmp implements Comparator<Person>{
+		public int compare(Person p1, Person p2){
+			if (p1.getTime() - p2.getTime() > 0)
+				return 1;
+			if (p1.getTime() - p2.getTime() < 0)
+				return -1;
+			else
+				return 0;
+			
+		}
+	}
+	
+	// Form for the "Tid"-popup
 	class TimeForm extends JPanel{
 		private JTextField startNrField = new JTextField(10);
 		private JTextField timeField = new JTextField(10);
@@ -132,15 +248,7 @@ public class Marathon extends JFrame{
 		}
 	}
 	
-	class Show implements ActionListener{
-		public void actionPerformed(ActionEvent ave){
-			listArea.setText("");
-			for(Person p : allPersons){
-				listArea.append(p.toString());
-			}
-		}
-	}
-	
+	// Form for the "Ny"-popup
 	class NewPersonForm extends JPanel{
 		private JTextField nameField = new JTextField(10);
 		private JTextField countryField = new JTextField(10);
@@ -174,35 +282,7 @@ public class Marathon extends JFrame{
 		}
 	}
 	
-	class NewPerson implements ActionListener{
-		public void actionPerformed(ActionEvent ave){
-			NewPersonForm newPersonForm = new NewPersonForm();
-			for(;;){
-				try {
-					int i = JOptionPane.showConfirmDialog(null, newPersonForm, "Ny person",JOptionPane.OK_CANCEL_OPTION);
-						if (i == 0){
-							Person p = new Person(	allPersons.size()+1,
-													newPersonForm.getName(),
-													newPersonForm.getCountry(),
-													newPersonForm.getAge());
-							allPersons.add(p);
-							try {
-								FileOutputStream fil = new FileOutputStream("AllPersons.pj");
-								ObjectOutputStream out = new ObjectOutputStream(fil);
-								out.writeObject(allPersons);
-							} catch (IOException e){
-								System.exit(1);
-							}
-						}
-					break;
-				} catch (NumberFormatException e){
-					JOptionPane.showMessageDialog(null, "Ålder måste vara ett heltal!", "Fel", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		}
-	}
-	
 	public static void main(String[] args){
-		new Marathon();
+		m = new Marathon();
 	}
 }
