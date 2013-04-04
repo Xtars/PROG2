@@ -15,7 +15,7 @@ public class Marathon extends JFrame{
 	
 	Marathon(){
 		super("DSV Kista Marathon");
-		addWindowListener(new java.awt.event.WindowAdapter() {
+		addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent winEvt) {
 				try {
 					FileOutputStream fil = new FileOutputStream("AllPersons.pj");
@@ -106,15 +106,15 @@ public class Marathon extends JFrame{
 				StartnrCmp cmp = new StartnrCmp();
 				Collections.sort(allPersons, cmp);
 			}
-			if (radioArray[1].isSelected()){
+			else if (radioArray[1].isSelected()){
 				NameCmp cmp = new NameCmp();
 				Collections.sort(allPersons, cmp);
 			}
-			if (radioArray[2].isSelected()){
+			else if (radioArray[2].isSelected()){
 				AgeCmp cmp = new AgeCmp();
 				Collections.sort(allPersons, cmp);
 			}
-			if (radioArray[3].isSelected()){
+			else if (radioArray[3].isSelected()){
 				TimeCmp cmp = new TimeCmp();
 				Collections.sort(allPersons, cmp);
 			}
@@ -141,7 +141,7 @@ public class Marathon extends JFrame{
 						if (updated) // If updated, break the infinite loop
 							break;
 						else  // Else, show error then run another iteration of the infinite loop
-							JOptionPane.showMessageDialog(m, "Det startnummret finns inte!", "Fel", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(m, "Det startnummret hittades inte!", "Fel", JOptionPane.ERROR_MESSAGE);
 					} // if i == 0
 					else if (i == 2) // Cancel was pushed, break the infinite loop
 						break;
