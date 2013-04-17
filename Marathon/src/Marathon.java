@@ -74,7 +74,7 @@ public class Marathon extends JFrame{
 		
 		// EAST
 		JPanel eastPanel = new JPanel();
-		eastPanel.setLayout(new GridLayout(5,1));
+		eastPanel.setLayout(new BoxLayout(eastPanel,BoxLayout.Y_AXIS));
 		JLabel sortByLabel = new JLabel("Sortering");
 		radioArray[0] = new JRadioButton("Startnr", true);
 		radioArray[1] = new JRadioButton("Namn", false);
