@@ -1,18 +1,18 @@
 package Graphs;
 
 import java.util.Map;
-import java.util.Collections;
+import java.util.Set;
 import java.util.List;
 
-public interface Graph {
+public interface Graph<N> {
 	// <N> is your node-class. For instance a City-class
-	public <N> void add(N node);
-	public <N> void connect(N from, N to);
-	public <N> void disconnect(N n1, N n2);
-	public <N> void remove(N node);
-	public <N> void setConnectionWeight(N from, N to, String name, int weight);
-	public <N> Collections getEdgesFrom(N node);
-	public <N> Collections getEdgesBetween(N n1, N n2);
-	public Map getNodes();
+	public void add(N node);
+	public void connect(N from, N to, String name, int weight);
+	public void setConnectionWeight(N from, N to, String name, int weight);
+	public Set getEdgesFrom(N node);
+	public void disconnect(N n1, N n2);
+	/*public void remove(N node);
+	public Collections getEdgesBetween(N n1, N n2);
+	public Map getNodes();*/
 	public String toString();	
 }
