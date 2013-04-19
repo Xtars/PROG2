@@ -3,33 +3,46 @@ package Graphs;
 import java.util.*;
 
 public class MatrixGraph<N> extends Graphs implements Graph<N>{
-	private Edge[][] connections;
+	private HashSet<Edge>[][] connections;
 	private ArrayList<N> nodes;
 	
 	public MatrixGraph(int amountOfNodes){
-		connections = new Edge[amountOfNodes][amountOfNodes];
-		//nodes.ensureCapacity(amountOfNodes);
+		connections = new HashSet[amountOfNodes][amountOfNodes];
 		nodes = new ArrayList<N>();
 	}
 	
+	// add a node
 	public void add(N n){
 		if (nodes.size() == connections.length)
 			throw new IndexOutOfBoundsException("Too many nodes!");
 		
-		nodes.add(n);
+		boolean exist = false;
+		for (N check : nodes){
+			if (check.equals(n)){
+				exist = true;
+				break;
+			}
+		}
+		if (!exist)
+			nodes.add(n);
+		else
+			System.out.println("that node already exist");
 	}
 	
-	/*public void remove(N n){
+	public void remove(N n){
 		if (!nodes.contains(n))
 			throw new NoSuchElementException("That node does not exist.");
 				
 		// get index  of the to-be-removed node so we know from where we have to update the matrix
 		int pos = indexOf(n);
 		int i;
+		
+		// set all entries related to pos to null
 		for (i = 0; i < connections.length; i++){
 			connections[i][pos] = null;
 			connections[pos][i] = null;
 		}
+		
 		
 		for (i = pos; i < connections.length; i++){
 			for (int j = 0; j < connections.length; j++){
@@ -45,21 +58,14 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 					connections[j][i] = null;
 				}
 				
-				// if it is our first iteration j also equals i here which means that the value is (and should remain) null
-				// if it is a later iteration, the value has already been updated
-				// so we jump ahead to the next entry that haven't been updated
-				else if (j == pos){
-					j = pos+1;
-				}
-				
-				// if j is smaller than i all we have to do is update the current entry to the entry that is "below" or "to the right"
-				else if (j < i){
+				// if j is smaller than pos we update the current position(s) to the position "below" and "to the right" respectively
+				else if (j < pos){
 					connections[i][j] = connections[i+1][j];
 					connections[j][i] = connections[j][i+1];
 				}
 				
-				// if j is bigger than i however, the current entry should be updated to be the entry "below" AND "to the right"
-				else if (j > i){
+				// if j is bigger than pos however, the current positions should be updated to be the positions "below" AND "to the right" for both
+				else if (j >= pos){
 					connections[i][j] = connections[i+1][j+1];
 					connections[j][i] = connections[j+1][i+1];
 				}
@@ -68,17 +74,37 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		
 		//  remove the node
 		nodes.remove(n);
-	}*/
+	}
 	
 	public void connect(N from, N to, String name, int weight){
 		if (!nodes.contains(from) || !nodes.contains(to))
 			throw new NoSuchElementException("One of the nodes does not exist.");
+		if (weight < 0)
+			throw new IllegalArgumentException("The value of weight can't be negative.");
 		
 		int fPos = indexOf(from);
 		int tPos = indexOf(to);
 		
-		connections[fPos][tPos] = new Edge(to, name, weight);
-		connections[tPos][fPos] = new Edge(from, name, weight);
+		if (connections[fPos][tPos] == null){
+			connections[fPos][tPos] = new HashSet<Edge>();
+			connections[fPos][tPos].add(new Edge(to, name, weight));
+			connections[tPos][fPos] = new HashSet<Edge>();
+			connections[tPos][fPos].add(new Edge(from, name, weight));
+		} else {
+			boolean exist = false;
+			for (Edge e : connections[fPos][tPos]){
+				if (e.getName().equals(name)){
+					exist = true;
+					break;
+				}
+			}
+			if (!exist){
+				connections[fPos][tPos].add(new Edge(to, name, weight));
+				connections[tPos][fPos].add(new Edge(from, name, weight));
+			} else {
+				throw new IllegalStateException("An edge with that name between these nodes already exist.");
+			}
+		}
 	}
 	
 	public void disconnect(N n1, N n2){
@@ -95,22 +121,51 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 	}
 	
 	public void setConnectionWeight(N from, N to, String name, int weight){
+		if (!nodes.contains(from) || !nodes.contains(to))
+			throw new NoSuchElementException("One of the nodes does not exist.");
+		if (weight < 0)
+			throw new IllegalArgumentException("The value of weight can't be negative.");
+		
 		int fPos = indexOf(from);
 		int tPos = indexOf(to);
 		
-		Edge e;
+		HashSet<Edge> hs;
 		
-		e = connections[fPos][tPos];
-		e.setWeight(weight);
-		e.setName(name);
+		hs = connections[tPos][fPos];
+		if (connections[tPos][fPos] != null){
+			boolean exist = false;
+			for (Edge e : hs){
+				if (e.getName().equals(name)){
+					e.setWeight(weight);
+					exist = true;
+					break;
+				}
+			}
+			if (!exist)
+				throw new NoSuchElementException("No edge with that name between those nodes exist.");
+		} else {
+			throw new NoSuchElementException("No edge exist between those nodes.");
+		}
 		
-		e = connections[tPos][fPos];
-		e.setWeight(weight);
-		e.setName(name);
+		hs = connections[fPos][tPos];
+		if (connections[fPos][tPos] != null){
+			boolean exist = false;
+			for (Edge e : hs){
+				if (e.getName().equals(name)){
+					e.setWeight(weight);
+					exist = true;
+					break;
+				}
+			}
+			if (!exist)
+				throw new NoSuchElementException("No edge with that name between those nodes exist.");
+		} else {
+			throw new NoSuchElementException("No edge exist between those nodes.");
+		}
 	}
 	
-	public Set<Edge> getEdgesFrom(N n){
-		Set<Edge> edges = new HashSet<Edge>();
+	public Set<HashSet> getEdgesFrom(N n){
+		Set<HashSet> edges = new HashSet<HashSet>();
 		int pos = nodes.indexOf(n);
 		
 		for(int i = 0; i < nodes.size(); i++){

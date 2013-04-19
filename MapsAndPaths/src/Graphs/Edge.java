@@ -27,10 +27,6 @@ public class Edge<N> {
 		weight = n;
 	}
 	
-	public void setName(String s){
-		name = s;
-	}
-	
 	public String toString(){
 		return "till " + destination + " med " + name + " tar " + weight;
 	}

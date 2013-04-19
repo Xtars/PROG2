@@ -12,6 +12,7 @@ public class TravelPlanner extends JFrame{
 		Graph g = new MatrixGraph<Location>(10);
 		
 		Location lA = new Location("A");
+		Location lFail = new Location("A");
 		Location lB = new Location("B");
 		Location lC = new Location("C");
 		Location lD = new Location("D");
@@ -20,14 +21,17 @@ public class TravelPlanner extends JFrame{
 		Location lG = new Location("G");
 		
 		g.add(lA);
+		g.add(lFail);
 		g.add(lB);
 		g.add(lC);
 		g.add(lD);
 		g.add(lE);
-		g.add(lF);
+		g.add(lF);  
 		g.add(lG);
 		
 		g.connect(lA, lB, "bil", 1);
+		g.connect(lA, lB, "flyg", 2);
+		g.connect(lA, lB, "tåg", 7);
 		g.connect(lA, lD, "flyg", 28);
 		g.connect(lB, lC, "bil", 2);
 		g.connect(lC, lD, "bil", 7);
@@ -35,7 +39,15 @@ public class TravelPlanner extends JFrame{
 		g.connect(lE, lF, "bil", 5);
 		g.connect(lF, lG, "bil", 6);
 		
+		g.setConnectionWeight(lA, lB, "bil", 5);
+		
 		System.out.println(g);
+		
+		g.disconnect(lB, lA);
+		//g.remove(lB);
+		
+		System.out.println(g);
+		
 		
 	}
 }

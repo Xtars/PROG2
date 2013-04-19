@@ -11,8 +11,8 @@ public interface Graph<N> {
 	public void setConnectionWeight(N from, N to, String name, int weight);
 	public Set getEdgesFrom(N node);
 	public void disconnect(N n1, N n2);
-	/*public void remove(N node);
-	public Set getEdgesBetween(N n1, N n2);
+	public void remove(N node);
+	/*public Set getEdgesBetween(N n1, N n2);
 	public Map getNodes();*/
 	public String toString();	
 }
