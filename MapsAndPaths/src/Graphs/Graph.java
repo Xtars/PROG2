@@ -2,7 +2,7 @@ package Graphs;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
+import java.util.ArrayList;
 
 public interface Graph<N> {
 	// <N> is your node-class. For instance a City-class
@@ -12,7 +12,7 @@ public interface Graph<N> {
 	public Set getEdgesFrom(N node);
 	public void disconnect(N n1, N n2);
 	public void remove(N node);
-	/*public Set getEdgesBetween(N n1, N n2);
-	public Map getNodes();*/
+	public Set getEdgesBetween(N n1, N n2);
+	public ArrayList getNodes();
 	public String toString();	
 }

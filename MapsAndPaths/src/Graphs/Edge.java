@@ -1,6 +1,6 @@
 package Graphs;
 
-public class Edge<N> {
+class Edge<N> {
 	private N destination;
 	private String name;
 	private int weight;

@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import Graphs.*;
+import java.util.*;
 
 public class TravelPlanner extends JFrame{
 	TravelPlanner(){
@@ -21,7 +22,6 @@ public class TravelPlanner extends JFrame{
 		Location lG = new Location("G");
 		
 		g.add(lA);
-		g.add(lFail);
 		g.add(lB);
 		g.add(lC);
 		g.add(lD);
@@ -39,15 +39,17 @@ public class TravelPlanner extends JFrame{
 		g.connect(lE, lF, "bil", 5);
 		g.connect(lF, lG, "bil", 6);
 		
-		g.setConnectionWeight(lA, lB, "bil", 5);
-		
 		System.out.println(g);
 		
-		g.disconnect(lB, lA);
+		//g.add(lFail); // lFail-name == lA-name -> should produce a fail
 		//g.remove(lB);
+		//g.connect(lA, lB, "bil", 5); // there already a "bil" connection between lA and lB -> should produce a fail
+		//g.disconnect(lB, lA);
+		//g.setConnectionWeight(lA, lB, "bil", 5);
+		//System.out.println(g.getEdgesFrom(lA));
+		//System.out.println(g.getEdgesBetween(lA, lB));
 		
+		System.out.println();
 		System.out.println(g);
-		
-		
 	}
 }

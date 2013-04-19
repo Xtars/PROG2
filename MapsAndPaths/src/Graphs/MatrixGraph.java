@@ -165,14 +165,34 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 	}
 	
 	public Set<HashSet> getEdgesFrom(N n){
-		Set<HashSet> edges = new HashSet<HashSet>();
+		if (!nodes.contains(n))
+			throw new NoSuchElementException("That node does not exist.");
+		
+		Set<HashSet> hs = new HashSet<HashSet>();
 		int pos = nodes.indexOf(n);
 		
 		for(int i = 0; i < nodes.size(); i++){
 			if (connections[pos][i] != null)
-				edges.add(connections[pos][i]);
+				hs.add(new HashSet<Edge>(connections[pos][i]));
 		}
-		return edges;
+		return hs;
+	}
+	
+	public HashSet<Edge> getEdgesBetween(N n1, N n2){
+		if (!nodes.contains(n1) || !nodes.contains(n2))
+			throw new NoSuchElementException("One of the nodes does not exist.");
+		
+		int p1 = indexOf(n1);
+		int p2 = indexOf(n2);
+		
+		HashSet<Edge> hs = new HashSet<Edge>(connections[p1][p2]);
+		
+		return hs;
+	}
+	
+	public ArrayList<N> getNodes(){
+		ArrayList<N> al = new ArrayList<N>(nodes);
+		return al;
 	}
 	
 	public String toString(){
