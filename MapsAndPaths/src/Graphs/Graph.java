@@ -12,7 +12,7 @@ public interface Graph<N> {
 	public Set getEdgesFrom(N node);
 	public void disconnect(N n1, N n2);
 	/*public void remove(N node);
-	public Collections getEdgesBetween(N n1, N n2);
+	public Set getEdgesBetween(N n1, N n2);
 	public Map getNodes();*/
 	public String toString();	
 }

@@ -8,9 +8,7 @@ public class TravelPlanner extends JFrame{
 		
 	}
 	
-	public static void main(String[] args){
-		System.out.println("test");
-		
+	public static void main(String[] args){		
 		Graph g = new MatrixGraph<Location>(10);
 		
 		Location lA = new Location("A");
@@ -20,9 +18,6 @@ public class TravelPlanner extends JFrame{
 		Location lE = new Location("E");
 		Location lF = new Location("F");
 		Location lG = new Location("G");
-		Location lH = new Location("H");
-		Location lI = new Location("I");
-		Location lJ = new Location("J");
 		
 		g.add(lA);
 		g.add(lB);
@@ -31,21 +26,14 @@ public class TravelPlanner extends JFrame{
 		g.add(lE);
 		g.add(lF);
 		g.add(lG);
-		g.add(lH);
-		g.add(lI);
-		g.add(lJ);
 		
-		g.connect(lA, lB, "bil", 5);
-		g.connect(lB, lC, "bil", 5);
-		g.connect(lC, lJ, "bil", 5);
-		g.connect(lD, lE, "bil", 5);
-		g.connect(lF, lH, "bil", 5);
-		g.connect(lI, lH, "bil", 5);
-		g.connect(lA, lH, "bil", 5);
-		
-		System.out.println(g);
-		
-		g.setConnectionWeight(lA, lB, "flyg", 347834);
+		g.connect(lA, lB, "bil", 1);
+		g.connect(lA, lD, "flyg", 28);
+		g.connect(lB, lC, "bil", 2);
+		g.connect(lC, lD, "bil", 7);
+		g.connect(lD, lE, "bil", 4);
+		g.connect(lE, lF, "bil", 5);
+		g.connect(lF, lG, "bil", 6);
 		
 		System.out.println(g);
 		
