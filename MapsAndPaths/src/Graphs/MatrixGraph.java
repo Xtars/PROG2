@@ -37,7 +37,7 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		int pos = indexOf(n);
 		int i;
 		
-		// set all entries related to pos to null
+		// set all entries related to n to null
 		for (i = 0; i < connections.length; i++){
 			connections[i][pos] = null;
 			connections[pos][i] = null;
@@ -47,6 +47,7 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		for (i = pos; i < connections.length; i++){
 			for (int j = 0; j < connections.length; j++){
 				
+				// if i == j we are on the diagonal so we set the entry to null (you can't travel from A to A)
 				if (i == j){
 					connections[i][j] = null;
 				}
@@ -81,6 +82,8 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 			throw new NoSuchElementException("One of the nodes does not exist.");
 		if (weight < 0)
 			throw new IllegalArgumentException("The value of weight can't be negative.");
+		if (from == to)
+			throw new IllegalArgumentException("You can't connect the same node with itself.");
 		
 		int fPos = indexOf(from);
 		int tPos = indexOf(to);
@@ -129,32 +132,28 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		int fPos = indexOf(from);
 		int tPos = indexOf(to);
 		
-		HashSet<Edge> hs;
-		
-		hs = connections[tPos][fPos];
-		if (connections[tPos][fPos] != null){
+		HashSet<Edge> hs = connections[tPos][fPos];
+		if (hs != null){
 			boolean exist = false;
+			// go through the edges, look for an edge with that name
 			for (Edge e : hs){
+				// if we find the name, update the weight
 				if (e.getName().equals(name)){
 					e.setWeight(weight);
 					exist = true;
 					break;
 				}
 			}
-			if (!exist)
-				throw new NoSuchElementException("No edge with that name between those nodes exist.");
-		} else {
-			throw new NoSuchElementException("No edge exist between those nodes.");
-		}
-		
-		hs = connections[fPos][tPos];
-		if (connections[fPos][tPos] != null){
-			boolean exist = false;
-			for (Edge e : hs){
-				if (e.getName().equals(name)){
-					e.setWeight(weight);
-					exist = true;
-					break;
+			// if exist is true, there is a corresponding edge on the "reversed" position of the matrix
+			if (exist){
+				// reverse the position
+				hs = connections[fPos][tPos];
+				for (Edge e : hs){
+					// update that aswell
+					if (e.getName().equals(name)){
+						e.setWeight(weight);
+						break;
+					}
 				}
 			}
 			if (!exist)
@@ -217,7 +216,6 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		}
 	}
 
-	
 	public ArrayList<Dijkstra> fastestPath(N from, N to){
 		if (pathExistsM(from, to)){
 			int lowestTime = Integer.MAX_VALUE;
