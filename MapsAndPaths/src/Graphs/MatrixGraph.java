@@ -234,7 +234,7 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 			while (!hm.get(to).getSettled()){
 				for (HashSet<Edge> hs : this.getEdgesFrom(current)){
 					for (Edge e : hs){
-						if (hm.get(current).getTime() + e.getWeight() < hm.get(e.getDestination()).getTime() && !hm.get(e.getDestination()).getSettled()){
+						if (hm.get(current).getTime() + e.getWeight() < hm.get(e.getDestination()).getTime()){
 							hm.get(e.getDestination()).setTime(hm.get(current).getTime() + e.getWeight());
 							hm.get(e.getDestination()).setFrom(current);
 							hm.get(e.getDestination()).setEdge(e);
