@@ -216,21 +216,9 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 			}
 		}
 	}
+
 	
-	private void dfsm2(N n, Set<N> visited){
-		visited.add(n);
-		N next = null;
-		for (HashSet<Edge> hs : this.getEdgesFrom(n)){
-			for (Edge e : hs){
-				if (!visited.contains(e.getDestination())){
-					next = (N) e.getDestination();
-					dfsm(next, visited);
-				}
-			}
-		}
-	}
-	
-	public ArrayList<Edge> fastestPath(N from, N to){
+	public ArrayList<Dijkstra> fastestPath(N from, N to){
 		if (pathExistsM(from, to)){
 			int lowestTime = Integer.MAX_VALUE;
 			N lowestNode = null;
@@ -265,11 +253,10 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 				hm.get(lowestNode).setSettled(true);
 				current = lowestNode;
 			}
-
-			ArrayList<Edge> path = new ArrayList<>();
+			ArrayList<Dijkstra> path = new ArrayList<>();
 			N cn = to;
 			while (cn != from){
-				path.add(hm.get(cn).getEdge());
+				path.add(hm.get(cn));
 				cn = (N) hm.get(cn).getFrom();
 			}
 			Collections.reverse(path);

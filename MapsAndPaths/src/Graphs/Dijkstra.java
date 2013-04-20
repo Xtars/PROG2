@@ -42,4 +42,8 @@ public class Dijkstra<N> implements Comparable<Dijkstra<N>>{
 	public int compareTo(Dijkstra d){
 		return this.time - d.time;
 	}
+	
+	public String toString(){
+		return "" + e + "(total time " + time + ")";
+	}
 }

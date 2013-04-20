@@ -46,7 +46,7 @@ public class TravelPlanner extends JFrame{
 		//g.setConnectionWeight(lA, lB, "bil", 5);
 		//System.out.println(g.getEdgesFrom(lA));
 		//System.out.println(g.getEdgesBetween(lA, lB));
-		ArrayList al = (ArrayList)g.fastestPath(lA, lD);
+		ArrayList al = g.fastestPath(lA, lD);
 		System.out.println(al);
 		
 		System.out.println();
