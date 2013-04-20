@@ -4,7 +4,7 @@ public class Dijkstra<N> implements Comparable<Dijkstra<N>>{
 	private int time;
 	private boolean settled;
 	private N from;
-	private Edge e;
+	private Edge<N> e;
 	
 	Dijkstra(){
 		time = Integer.MAX_VALUE;
@@ -22,7 +22,7 @@ public class Dijkstra<N> implements Comparable<Dijkstra<N>>{
 	public N getFrom(){
 		return from;
 	}
-	public Edge getEdge(){
+	public Edge<N> getEdge(){
 		return e;
 	}
 	
@@ -35,11 +35,11 @@ public class Dijkstra<N> implements Comparable<Dijkstra<N>>{
 	public void setFrom(N from){
 		this.from = from;
 	}
-	public void setEdge(Edge e){
+	public void setEdge(Edge<N> e){
 		this.e = e;
 	}
 	
-	public int compareTo(Dijkstra d){
+	public int compareTo(Dijkstra<N> d){
 		return this.time - d.time;
 	}
 	

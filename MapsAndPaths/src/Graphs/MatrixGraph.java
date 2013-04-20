@@ -2,8 +2,8 @@ package Graphs;
 
 import java.util.*;
 
-public class MatrixGraph<N> extends Graphs implements Graph<N>{
-	private HashSet<Edge>[][] connections;
+public class MatrixGraph<N> implements Graph<N>{
+	private HashSet<Edge<N>>[][] connections;
 	private ArrayList<N> nodes;
 	
 	public MatrixGraph(int amountOfNodes){
@@ -89,21 +89,21 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		int tPos = indexOf(to);
 		
 		if (connections[fPos][tPos] == null){
-			connections[fPos][tPos] = new HashSet<Edge>();
-			connections[fPos][tPos].add(new Edge(to, name, weight));
-			connections[tPos][fPos] = new HashSet<Edge>();
-			connections[tPos][fPos].add(new Edge(from, name, weight));
+			connections[fPos][tPos] = new HashSet<Edge<N>>();
+			connections[fPos][tPos].add(new Edge<N>(to, name, weight));
+			connections[tPos][fPos] = new HashSet<Edge<N>>();
+			connections[tPos][fPos].add(new Edge<N>(from, name, weight));
 		} else {
 			boolean exist = false;
-			for (Edge e : connections[fPos][tPos]){
+			for (Edge<N> e : connections[fPos][tPos]){
 				if (e.getName().equals(name)){
 					exist = true;
 					break;
 				}
 			}
 			if (!exist){
-				connections[fPos][tPos].add(new Edge(to, name, weight));
-				connections[tPos][fPos].add(new Edge(from, name, weight));
+				connections[fPos][tPos].add(new Edge<N>(to, name, weight));
+				connections[tPos][fPos].add(new Edge<N>(from, name, weight));
 			} else {
 				throw new IllegalStateException("An edge with that name between these nodes already exist.");
 			}
@@ -132,11 +132,11 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		int fPos = indexOf(from);
 		int tPos = indexOf(to);
 		
-		HashSet<Edge> hs = connections[tPos][fPos];
+		HashSet<Edge<N>> hs = connections[tPos][fPos];
 		if (hs != null){
 			boolean exist = false;
 			// go through the edges, look for an edge with that name
-			for (Edge e : hs){
+			for (Edge<N> e : hs){
 				// if we find the name, update the weight
 				if (e.getName().equals(name)){
 					e.setWeight(weight);
@@ -148,7 +148,7 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 			if (exist){
 				// reverse the position
 				hs = connections[fPos][tPos];
-				for (Edge e : hs){
+				for (Edge<N> e : hs){
 					// update that aswell
 					if (e.getName().equals(name)){
 						e.setWeight(weight);
@@ -163,34 +163,34 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		}
 	}
 	
-	public Set<HashSet> getEdgesFrom(N n){
+	public Set<HashSet<Edge<N>>> getEdgesFrom(N n){
 		if (!nodes.contains(n))
 			throw new NoSuchElementException("That node does not exist.");
 		
-		Set<HashSet> hs = new HashSet<HashSet>();
+		Set<HashSet<Edge<N>>> hs = new HashSet<HashSet<Edge<N>>>();
 		int pos = nodes.indexOf(n);
 		
 		for(int i = 0; i < nodes.size(); i++){
 			if (connections[pos][i] != null)
-				hs.add(new HashSet<Edge>(connections[pos][i]));
+				hs.add(new HashSet<Edge<N>>(connections[pos][i]));
 		}
 		return hs;
 	}
 	
-	public HashSet<Edge> getEdgesBetween(N n1, N n2){
+	public Set<Edge<N>> getEdgesBetween(N n1, N n2){
 		if (!nodes.contains(n1) || !nodes.contains(n2))
 			throw new NoSuchElementException("One of the nodes does not exist.");
 		
 		int p1 = indexOf(n1);
 		int p2 = indexOf(n2);
 		
-		HashSet<Edge> hs = new HashSet<Edge>(connections[p1][p2]);
+		HashSet<Edge<N>> hs = new HashSet<Edge<N>>(connections[p1][p2]);
 		
 		return hs;
 	}
 	
-	public ArrayList<N> getNodes(){
-		ArrayList<N> al = new ArrayList<N>(nodes);
+	public List<N> getNodes(){
+		List<N> al = new ArrayList<N>(nodes);
 		return al;
 	}
 	
@@ -206,8 +206,8 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 	private void dfsm(N n, Set<N> visited){
 		visited.add(n);
 		N next = null;
-		for (HashSet<Edge> hs : this.getEdgesFrom(n)){
-			for (Edge e : hs){
+		for (HashSet<Edge<N>> hs : this.getEdgesFrom(n)){
+			for (Edge<N> e : hs){
 				if (!visited.contains(e.getDestination())){
 					next = (N) e.getDestination();
 					dfsm(next, visited);
@@ -216,11 +216,11 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		}
 	}
 
-	public ArrayList<Dijkstra> fastestPath(N from, N to){
+	public ArrayList<Dijkstra<N>> fastestPath(N from, N to){
 		if (pathExistsM(from, to)){
 			int lowestTime = Integer.MAX_VALUE;
 			N lowestNode = null;
-			TreeMap<N, Dijkstra> hm = new TreeMap<>();
+			TreeMap<N, Dijkstra<N>> hm = new TreeMap<>();
 			for (N n : nodes){
 				hm.put(n, new Dijkstra<N>());
 			}
@@ -230,8 +230,8 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 			
 			N current = (N) from;
 			while (!hm.get(to).getSettled()){
-				for (HashSet<Edge> hs : this.getEdgesFrom(current)){
-					for (Edge e : hs){
+				for (HashSet<Edge<N>> hs : this.getEdgesFrom(current)){
+					for (Edge<N> e : hs){
 						if (hm.get(current).getTime() + e.getWeight() < hm.get(e.getDestination()).getTime()){
 							hm.get(e.getDestination()).setTime(hm.get(current).getTime() + e.getWeight());
 							hm.get(e.getDestination()).setFrom(current);
@@ -251,7 +251,7 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 				hm.get(lowestNode).setSettled(true);
 				current = lowestNode;
 			}
-			ArrayList<Dijkstra> path = new ArrayList<>();
+			ArrayList<Dijkstra<N>> path = new ArrayList<>();
 			N cn = to;
 			while (cn != from){
 				path.add(hm.get(cn));

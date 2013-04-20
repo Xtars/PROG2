@@ -10,7 +10,7 @@ public class TravelPlanner extends JFrame{
 	}
 	
 	public static void main(String[] args){		
-		MatrixGraph g = new MatrixGraph<Location>(10);
+		MatrixGraph<Location> g = new MatrixGraph<Location>(10);
 		
 		Location lA = new Location("A");
 		Location lFail = new Location("A");

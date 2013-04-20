@@ -1,5 +1,5 @@
 package Graphs;
 
-public class ListGraph extends Graphs {
+public class ListGraph {
 
 }
