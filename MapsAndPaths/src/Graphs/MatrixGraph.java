@@ -203,7 +203,87 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		}
 		return s;
 	}
+
+	private void dfsm(N n, Set<N> visited){
+		visited.add(n);
+		N next = null;
+		for (HashSet<Edge> hs : this.getEdgesFrom(n)){
+			for (Edge e : hs){
+				if (!visited.contains(e.getDestination())){
+					next = (N) e.getDestination();
+					dfsm(next, visited);
+				}
+			}
+		}
+	}
 	
+	private void dfsm2(N n, Set<N> visited){
+		visited.add(n);
+		N next = null;
+		for (HashSet<Edge> hs : this.getEdgesFrom(n)){
+			for (Edge e : hs){
+				if (!visited.contains(e.getDestination())){
+					next = (N) e.getDestination();
+					dfsm(next, visited);
+				}
+			}
+		}
+	}
+	
+	public ArrayList<Edge> fastestPath(N from, N to){
+		if (pathExistsM(from, to)){
+			int lowestTime = Integer.MAX_VALUE;
+			N lowestNode = null;
+			TreeMap<N, Dijkstra> hm = new TreeMap<>();
+			for (N n : nodes){
+				hm.put(n, new Dijkstra<N>());
+			}
+			
+			hm.get(from).setTime(0);
+			hm.get(from).setSettled(true);
+			
+			N current = (N) from;
+			while (!hm.get(to).getSettled()){
+				for (HashSet<Edge> hs : this.getEdgesFrom(current)){
+					for (Edge e : hs){
+						if (hm.get(current).getTime() + e.getWeight() < hm.get(e.getDestination()).getTime() && !hm.get(e.getDestination()).getSettled()){
+							hm.get(e.getDestination()).setTime(hm.get(current).getTime() + e.getWeight());
+							hm.get(e.getDestination()).setFrom(current);
+							hm.get(e.getDestination()).setEdge(e);
+						}
+					}
+				}
+				
+				lowestTime = Integer.MAX_VALUE;
+				lowestNode = null;
+				for (N n : nodes){
+					if (!hm.get(n).getSettled() && hm.get(n).getTime() < lowestTime){
+						lowestTime = hm.get(n).getTime();
+						lowestNode = n;
+					}
+				}
+				hm.get(lowestNode).setSettled(true);
+				current = lowestNode;
+			}
+
+			ArrayList<Edge> path = new ArrayList<>();
+			N cn = to;
+			while (cn != from){
+				path.add(hm.get(cn).getEdge());
+				cn = (N) hm.get(cn).getFrom();
+			}
+			Collections.reverse(path);
+			return path;
+		} else {
+			throw new NoSuchElementException("No path exists between those nodes.");
+		}
+	}
+	
+	public boolean pathExistsM(N from, N to){
+		Set<N> visited = new HashSet<N>();
+		dfsm(from, visited);
+		return visited.contains(to);
+	}
 	
 	// help methods
 	private int indexOf(N n){

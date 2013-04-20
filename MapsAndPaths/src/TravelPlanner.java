@@ -10,7 +10,7 @@ public class TravelPlanner extends JFrame{
 	}
 	
 	public static void main(String[] args){		
-		Graph g = new MatrixGraph<Location>(10);
+		MatrixGraph g = new MatrixGraph<Location>(10);
 		
 		Location lA = new Location("A");
 		Location lFail = new Location("A");
@@ -29,14 +29,12 @@ public class TravelPlanner extends JFrame{
 		g.add(lF);  
 		g.add(lG);
 		
-		g.connect(lA, lB, "bil", 1);
-		g.connect(lA, lB, "flyg", 2);
-		g.connect(lA, lB, "tåg", 7);
-		g.connect(lA, lD, "flyg", 28);
+		g.connect(lA, lB, "bil", 2);
+		g.connect(lA, lB, "tåg", 1);
+		g.connect(lA, lB, "flyg", 3);
 		g.connect(lB, lC, "bil", 2);
 		g.connect(lC, lD, "bil", 7);
 		g.connect(lD, lE, "bil", 4);
-		g.connect(lE, lF, "bil", 5);
 		g.connect(lF, lG, "bil", 6);
 		
 		System.out.println(g);
@@ -48,8 +46,11 @@ public class TravelPlanner extends JFrame{
 		//g.setConnectionWeight(lA, lB, "bil", 5);
 		//System.out.println(g.getEdgesFrom(lA));
 		//System.out.println(g.getEdgesBetween(lA, lB));
+		ArrayList al = (ArrayList)g.fastestPath(lA, lD);
+		System.out.println(al);
 		
 		System.out.println();
 		System.out.println(g);
+		
 	}
 }

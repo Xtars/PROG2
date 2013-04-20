@@ -1,4 +1,4 @@
-public class Location {
+public class Location implements Comparable<Location>{
 	private String name;
 	
 	Location(String name){
@@ -16,6 +16,10 @@ public class Location {
 			Location l = (Location) o;
 			return l.getName().equals(this.getName());
 		}
+	}
+	
+	public int compareTo(Location l){
+		return this.getName().compareTo(l.getName());
 	}
 	
 	public String toString(){

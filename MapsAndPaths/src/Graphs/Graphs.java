@@ -1,12 +1,9 @@
 package Graphs;
 
-import java.util.List;
+import java.util.*;
 
-public class Graphs {
-	/*public <N> List getPath(N n1, N n2){
-		
-	}
-	public <N> boolean pathExists(N n1, N n2){
+public class Graphs<N>{
+	/*public List getPath(N n1, N n2){
 		
 	}*/
 }
