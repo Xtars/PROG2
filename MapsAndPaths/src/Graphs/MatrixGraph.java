@@ -10,8 +10,7 @@ public class MatrixGraph<N> implements Graph<N>{
 		connections = new HashSet[amountOfNodes][amountOfNodes];
 		nodes = new ArrayList<N>();
 	}
-	
-	// add a node
+
 	public void add(N n){
 		if (nodes.size() == connections.length)
 			throw new IndexOutOfBoundsException("Too many nodes!");
@@ -65,7 +64,7 @@ public class MatrixGraph<N> implements Graph<N>{
 					connections[j][i] = connections[j][i+1];
 				}
 				
-				// if j is bigger than pos however, the current positions should be updated to be the positions "below" AND "to the right" for both
+				// if j is bigger than or equal to pos however, the current positions should be updated to be the positions "below" AND "to the right" for both
 				else if (j >= pos){
 					connections[i][j] = connections[i+1][j+1];
 					connections[j][i] = connections[j+1][i+1];
@@ -217,7 +216,9 @@ public class MatrixGraph<N> implements Graph<N>{
 	}
 
 	public ArrayList<Dijkstra<N>> fastestPath(N from, N to){
-		if (pathExistsM(from, to)){
+		if (!pathExistsM(from, to)){
+			throw new NoSuchElementException("No path exists between those nodes.");
+		} else {
 			int lowestTime = Integer.MAX_VALUE;
 			N lowestNode = null;
 			TreeMap<N, Dijkstra<N>> hm = new TreeMap<>();
@@ -259,8 +260,6 @@ public class MatrixGraph<N> implements Graph<N>{
 			}
 			Collections.reverse(path);
 			return path;
-		} else {
-			throw new NoSuchElementException("No path exists between those nodes.");
 		}
 	}
 	
@@ -269,8 +268,7 @@ public class MatrixGraph<N> implements Graph<N>{
 		dfsm(from, visited);
 		return visited.contains(to);
 	}
-	
-	// help methods
+
 	private int indexOf(N n){
 		int pos = nodes.indexOf(n);
 		if (pos < 0)

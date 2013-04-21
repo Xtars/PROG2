@@ -44,6 +44,6 @@ public class Dijkstra<N> implements Comparable<Dijkstra<N>>{
 	}
 	
 	public String toString(){
-		return "" + e + "(total time " + time + ")";
+		return "" + e + " (Total: "+time+")\n";
 	}
 }

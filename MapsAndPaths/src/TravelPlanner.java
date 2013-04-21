@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import Graphs.*;
-import java.util.*;
 
 public class TravelPlanner extends JFrame{
 	TravelPlanner(){
@@ -11,7 +10,7 @@ public class TravelPlanner extends JFrame{
 	
 	public static void main(String[] args){		
 		MatrixGraph<Location> g = new MatrixGraph<Location>(10);
-		
+
 		Location lA = new Location("A");
 		Location lFail = new Location("A");
 		Location lB = new Location("B");
@@ -49,7 +48,7 @@ public class TravelPlanner extends JFrame{
 		//g.setConnectionWeight(lA, lB, "bil", -5); // weight can't be negative, should produce a fail
 		//System.out.println(g.getEdgesFrom(lA));
 		//System.out.println(g.getEdgesBetween(lA, lB));
-		//System.out.println(g.fastestPath(lA, lE));
+		System.out.println(g.fastestPath(lA, lE));
 		//System.out.println(g.fastestPath(lA, lF)); // no path between those nodes, should produce a fail
 		
 		System.out.println();
