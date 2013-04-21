@@ -3,11 +3,11 @@ package Graphs;
 import java.util.*;
 
 public class MatrixGraph<N> implements Graph<N>{
-	private HashSet<Edge<N>>[][] connections;
+	private Set<Edge<N>>[][] connections;
 	private ArrayList<N> nodes;
 	
 	public MatrixGraph(int amountOfNodes){
-		connections = new HashSet[amountOfNodes][amountOfNodes];
+		connections = (HashSet<Edge<N>>[][])new HashSet[amountOfNodes][amountOfNodes];
 		nodes = new ArrayList<N>();
 	}
 
@@ -131,7 +131,7 @@ public class MatrixGraph<N> implements Graph<N>{
 		int fPos = indexOf(from);
 		int tPos = indexOf(to);
 		
-		HashSet<Edge<N>> hs = connections[tPos][fPos];
+		Set<Edge<N>> hs = connections[tPos][fPos];
 		if (hs != null){
 			boolean exist = false;
 			// go through the edges, look for an edge with that name
