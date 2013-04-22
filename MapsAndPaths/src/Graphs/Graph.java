@@ -13,4 +13,5 @@ public interface Graph<N> {
 	public Set<Edge<N>> getEdgesBetween(N n1, N n2);
 	public List<N> getNodes();
 	public String toString();	
+	public ArrayList<Dijkstra<N>> fastestPath(Graph<N> g, N from, N to);
 }

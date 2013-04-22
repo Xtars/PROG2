@@ -2,7 +2,7 @@ package Graphs;
 
 import java.util.*;
 
-public class MatrixGraph<N> implements Graph<N>{
+public class MatrixGraph<N> extends Graphs implements Graph<N>{
 	private Set<Edge<N>>[][] connections;
 	private ArrayList<N> nodes;
 	
@@ -25,7 +25,7 @@ public class MatrixGraph<N> implements Graph<N>{
 		if (!exist)
 			nodes.add(n);
 		else
-			System.out.println("that node already exist");
+			System.out.println("That node already exist");
 	}
 	
 	public void remove(N n){
@@ -202,7 +202,7 @@ public class MatrixGraph<N> implements Graph<N>{
 		return s;
 	}
 
-	private void dfsm(N n, Set<N> visited){
+	/*private void dfsm(N n, Set<N> visited){
 		visited.add(n);
 		N next = null;
 		for (HashSet<Edge<N>> hs : this.getEdgesFrom(n)){
@@ -213,10 +213,10 @@ public class MatrixGraph<N> implements Graph<N>{
 				}
 			}
 		}
-	}
+	}*/
 
-	public ArrayList<Dijkstra<N>> fastestPath(N from, N to){
-		if (!pathExistsM(from, to)){
+	public ArrayList<Dijkstra<N>> fastestPath(Graph<N> g, N from, N to){
+		if (!pathExists(g, from, to)){
 			throw new NoSuchElementException("No path exists between those nodes.");
 		} else {
 			int lowestTime = Integer.MAX_VALUE;
@@ -263,11 +263,11 @@ public class MatrixGraph<N> implements Graph<N>{
 		}
 	}
 	
-	public boolean pathExistsM(N from, N to){
+	/*public boolean pathExistsM(N from, N to){
 		Set<N> visited = new HashSet<N>();
 		dfsm(from, visited);
 		return visited.contains(to);
-	}
+	}*/
 
 	private int indexOf(N n){
 		int pos = nodes.indexOf(n);
