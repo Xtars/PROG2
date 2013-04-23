@@ -17,7 +17,7 @@ public class ListGraph<N> extends Graphs implements Graph<N> {
 	}
 	
 	public void connect(N from, N to, String name, int weight){
-		if (!nodes.containsKey(from) || !nodes.containsKey(from))
+		if (!nodes.containsKey(from) || !nodes.containsKey(to))
 			throw new NoSuchElementException("One of the nodes does not exist.");
 		if (weight < 0)
 			throw new IllegalArgumentException("The value of weight can't be negative.");
@@ -40,6 +40,9 @@ public class ListGraph<N> extends Graphs implements Graph<N> {
 	}
 	
 	public Set<HashSet<Edge<N>>> getEdgesFrom(N node){
+		if (!nodes.keySet().contains(node))
+			throw new NoSuchElementException("One of the nodes does not exist.");
+		
 		Set<HashSet<Edge<N>>> hs = new HashSet<HashSet<Edge<N>>>();
 		HashSet<Edge<N>> hsInner = new HashSet<Edge<N>>();
 		
@@ -60,20 +63,53 @@ public class ListGraph<N> extends Graphs implements Graph<N> {
 		return s;
 	}
 	
-	/*public void disconnect(N n1, N n2){
+	public void disconnect(N n1, N n2){
 		if (!nodes.containsKey(n1) || !nodes.containsKey(n2))
 			throw new NoSuchElementException("One of the nodes does not exist.");
 		
-		nodes.get(n1)
+		ArrayList<Edge<N>> toBeRemoved = new ArrayList<Edge<N>>();
+		for (Edge<N> e : nodes.get(n1)){
+			if (e.getDestination().equals(n2)){
+				toBeRemoved.add(e);
+			}
+		}
+		for (Edge<N> e : toBeRemoved){
+			nodes.get(n1).remove(e);
+		}
 		
+		toBeRemoved.clear();
+		for (Edge<N> e : nodes.get(n2)){
+			if (e.getDestination().equals(n1)){
+				toBeRemoved.add(e);
+			}
+		}
+		for (Edge<N> e : toBeRemoved){
+			nodes.get(n2).remove(e);
+		}
 	}
 	
+	public List<N> getNodes(){
+		return new ArrayList<N>(nodes.keySet());
+	}
+	
+	public void remove(N node){
+		ArrayList<Edge<N>> toBeRemoved = new ArrayList<Edge<N>>();
+		for (N n : nodes.keySet()){
+			for (Edge<N> e : nodes.get(n)){
+				if (e.getDestination().equals(node)){
+					toBeRemoved.add(e);
+				}
+			}
+			for (Edge<N> e : toBeRemoved){
+				nodes.get(n).remove(e);
+			}
+		}
+		nodes.remove(node);
+	}
+	
+	/*
 	public void setConnectionWeight(N from, N to, String name, int weight){
 		
 	}
-	public void remove(N node);
-	public Set<Edge<N>> getEdgesBetween(N n1, N n2);
-	public List<N> getNodes();
-	public String toString();	
-	public ArrayList<Dijkstra<N>> fastestPath(Graph<N> g, N from, N to);*/
+	public Set<Edge<N>> getEdgesBetween(N n1, N n2);*/
 }
