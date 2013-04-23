@@ -94,7 +94,7 @@ public class TravelPlanner extends JFrame{
 			buttonPanel.add(b, BorderLayout.NORTH);
 		}
 		
-		setSize(new Dimension(670,100));
+		pack();
 		setLocation(new Point(400,300));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);

@@ -221,7 +221,7 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		} else {
 			int lowestTime = Integer.MAX_VALUE;
 			N lowestNode = null;
-			TreeMap<N, Dijkstra<N>> hm = new TreeMap<>();
+			HashMap<N, Dijkstra<N>> hm = new HashMap<>();
 			for (N n : nodes){
 				hm.put(n, new Dijkstra<N>());
 			}

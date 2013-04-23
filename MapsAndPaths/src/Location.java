@@ -13,13 +13,12 @@ public class Location implements Comparable<Location>{
 		if (o == null || this.getClass() != o.getClass()){
 			return false;
 		} else {
-			Location l = (Location) o;
-			return l.getName().equals(this.getName());
+			return o.hashCode() == this.hashCode();
 		}
 	}
 	
 	public int compareTo(Location l){
-		return this.getName().compareTo(l.getName());
+		return name.compareTo(l.getName());
 	}
 	
 	public String toString(){
