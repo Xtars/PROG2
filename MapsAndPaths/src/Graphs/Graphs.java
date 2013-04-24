@@ -19,7 +19,7 @@ public class Graphs{
 		}
 	}
 	
-	public <N> boolean pathExists(Graph<N> g, N from, N to){
+	public static <N> boolean pathExists(Graph<N> g, N from, N to){
 		Set<N> visited = new HashSet<N>();
 		dfs(g, from, visited);
 		return visited.contains(to);

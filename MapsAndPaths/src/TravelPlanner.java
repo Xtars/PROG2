@@ -155,7 +155,7 @@ public class TravelPlanner extends JFrame{
 	public static void main(String[] args){		
 		TravelPlanner tp = new TravelPlanner();
 		
-		Graph<Location> g = new ListGraph<Location>();
+		ListGraph<Location> g = new ListGraph<Location>();
 
 		Location lA = new Location("A");
 		Location lFail = new Location("A");
@@ -195,7 +195,7 @@ public class TravelPlanner extends JFrame{
 		//g.setConnectionWeight(lA, lB, "bil", -5); // weight can't be negative, should produce a fail
 		//System.out.println(g.getEdgesFrom(lA));
 		//System.out.println(g.getEdgesBetween(lA, lB));
-		System.out.println(((Graphs) g).fastestPath(g, lA, lE));
+		System.out.println(g.fastestPath(g, lA, lE));
 		//System.out.println(g.fastestPath(lA, lF)); // no path between those nodes, should produce a fail
 		
 		System.out.println();
