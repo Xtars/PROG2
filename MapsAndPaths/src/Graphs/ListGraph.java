@@ -35,33 +35,11 @@ public class ListGraph<N> extends Graphs implements Graph<N> {
 			nodes.get(from).add(new Edge<N>(to, name, weight));
 			nodes.get(to).add(new Edge<N>(from, name, weight));
 		} else {
-			throw new IllegalStateException("An edge with that name between these nodes already exist.");
+			throw new IllegalStateException("An edge with that name between those nodes already exist.");
 		}
 	}
 	
-	public Set<HashSet<Edge<N>>> getEdgesFrom(N node){
-		if (!nodes.keySet().contains(node))
-			throw new NoSuchElementException("One of the nodes does not exist.");
-		
-		Set<HashSet<Edge<N>>> hs = new HashSet<HashSet<Edge<N>>>();
-		HashSet<Edge<N>> hsInner = new HashSet<Edge<N>>();
-		
-		for (Edge<N> e : nodes.get(node)){
-			hsInner.add(e);
-		}
-		
-		hs.add(hsInner);
-		return hs;
-	}
-	
-	public String toString(){
-		String s = "";
-		for(N n : nodes.keySet()){
-			s += n.toString() + ": ";
-			s += getEdgesFrom(n) + "\n";
-		}
-		return s;
-	}
+
 	
 	public void disconnect(N n1, N n2){
 		if (!nodes.containsKey(n1) || !nodes.containsKey(n2))
@@ -107,9 +85,64 @@ public class ListGraph<N> extends Graphs implements Graph<N> {
 		nodes.remove(node);
 	}
 	
-	/*
 	public void setConnectionWeight(N from, N to, String name, int weight){
+		if (!nodes.containsKey(from) || !nodes.containsKey(to))
+			throw new NoSuchElementException("One of the nodes does not exist.");
+		if (weight < 0)
+			throw new IllegalArgumentException("The value of weight can't be negative.");
+		
+		boolean exist = false;
+		for (Edge<N> e : getEdgesBetween(from, to)){
+			if ((e.getDestination().equals(to) || e.getDestination().equals(from)) && e.getName().equals(name)){
+				e.setWeight(weight);
+				exist = true;
+			}
+		}
+		if (!exist)
+			throw new NoSuchElementException("No edge with that name between those nodes exist.");
 		
 	}
-	public Set<Edge<N>> getEdgesBetween(N n1, N n2);*/
+	
+	public Set<HashSet<Edge<N>>> getEdgesFrom(N node){
+		if (!nodes.keySet().contains(node))
+			throw new NoSuchElementException("One of the nodes does not exist.");
+		
+		Set<HashSet<Edge<N>>> hs = new HashSet<HashSet<Edge<N>>>();
+		HashSet<Edge<N>> hsInner = new HashSet<Edge<N>>();
+		
+		for (Edge<N> e : nodes.get(node)){
+			hsInner.add(e);
+		}
+		
+		hs.add(hsInner);
+		return hs;
+	}
+	
+	public Set<Edge<N>> getEdgesBetween(N n1, N n2){
+		if (!nodes.containsKey(n1) || !nodes.containsKey(n2))
+			throw new NoSuchElementException("One of the nodes does not exist.");
+		
+		Set<Edge<N>> edges = new HashSet<Edge<N>>();
+		for (Edge<N> e : nodes.get(n1)){
+			if (e.getDestination().equals(n2)){
+				edges.add(e);
+			}
+		}
+		for (Edge<N> e : nodes.get(n2)){
+			if (e.getDestination().equals(n1)){
+				edges.add(e);
+			}
+		}
+		
+		return edges;
+	}
+	
+	public String toString(){
+		String s = "";
+		for(N n : nodes.keySet()){
+			s += n.toString() + ": ";
+			s += getEdgesFrom(n) + "\n";
+		}
+		return s;
+	}
 }

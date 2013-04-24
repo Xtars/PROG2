@@ -128,10 +128,8 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 		if (weight < 0)
 			throw new IllegalArgumentException("The value of weight can't be negative.");
 		
-		int fPos = indexOf(from);
-		int tPos = indexOf(to);
 		
-		Set<Edge<N>> hs = connections[tPos][fPos];
+		Set<Edge<N>> hs = getEdgesBetween(from, to);
 		if (hs != null){
 			boolean exist = false;
 			// go through the edges, look for an edge with that name
@@ -146,7 +144,7 @@ public class MatrixGraph<N> extends Graphs implements Graph<N>{
 			// if exist is true, there is a corresponding edge on the "reversed" position of the matrix
 			if (exist){
 				// reverse the position
-				hs = connections[fPos][tPos];
+				hs = getEdgesBetween(to, from);
 				for (Edge<N> e : hs){
 					// update that aswell
 					if (e.getName().equals(name)){
